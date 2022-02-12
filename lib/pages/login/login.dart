@@ -1,13 +1,21 @@
 import "package:flutter/material.dart";
 import 'package:navigation_bar/constants/page_constants.dart';
 
+import '/dao/db_factory.dart';
+import '/dao/model/user_profile.dart';
+
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
-  static TextEditingController phoneTextFieldController = TextEditingController();
-  static TextEditingController otpOneTextFieldController = TextEditingController();
-  static TextEditingController otpTwoTextFieldController = TextEditingController();
-  static TextEditingController otpThreeTextFieldController = TextEditingController();
-  static TextEditingController otpFourTextFieldController = TextEditingController();
+  static TextEditingController phoneTextFieldController =
+      TextEditingController();
+  static TextEditingController otpOneTextFieldController =
+      TextEditingController();
+  static TextEditingController otpTwoTextFieldController =
+      TextEditingController();
+  static TextEditingController otpThreeTextFieldController =
+      TextEditingController();
+  static TextEditingController otpFourTextFieldController =
+      TextEditingController();
   static FocusNode otpOneFocusNode = FocusNode();
   static FocusNode otpTwoFocusNode = FocusNode();
   static FocusNode otpThreeFocusNode = FocusNode();
@@ -15,6 +23,14 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future<UserProfile?> userProfileFuture = DbFactory.getUserProfile();
+    userProfileFuture.then((value) {
+      if (value != null) {
+        debugPrint("phoneNumber ${value.phoneNumber} \nuserName ${value.userName}");
+
+        navigatorToHomePage(context);
+      }
+    });
     return Scaffold(
       body: Center(
         child: Column(
@@ -114,12 +130,6 @@ class LoginPage extends StatelessWidget {
                 ),
               ],
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     verifyOptLogin(context);
-            //   },
-            //   child: Text("登入"),
-            // ),
           ],
         ),
       ),
@@ -132,14 +142,25 @@ class LoginPage extends StatelessWidget {
     String otpTwoStr = otpTwoTextFieldController.text;
     String otpThreeStr = otpThreeTextFieldController.text;
     String otpFourStr = otpFourTextFieldController.text;
-    if (phoneNum.trim().isEmpty || otpOneStr.trim().isEmpty || otpTwoStr.trim().isEmpty || otpThreeStr.trim().isEmpty || otpFourStr.trim().isEmpty) {
+    if (phoneNum.trim().isEmpty ||
+        otpOneStr.trim().isEmpty ||
+        otpTwoStr.trim().isEmpty ||
+        otpThreeStr.trim().isEmpty ||
+        otpFourStr.trim().isEmpty) {
       return;
     }
+
     String fullOtp = otpOneStr + otpTwoStr + otpThreeStr + otpFourStr;
     debugPrint("phoneNum $phoneNum \notp $fullOtp");
-    Navigator.pushNamed(
-      context,
-      PageConstants.homePage,
-    );
+
+    UserProfile userProfile =
+        UserProfile(phoneNumber: phoneNum, userName: "test");
+    DbFactory.insertUserProfile(userProfile);
+
+    navigatorToHomePage(context);
+  }
+
+  void navigatorToHomePage(BuildContext context) {
+    Navigator.popAndPushNamed(context, PageConstants.homePage);
   }
 }
