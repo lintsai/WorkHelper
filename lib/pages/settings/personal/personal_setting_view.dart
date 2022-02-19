@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:navigation_bar/component/default_switch_list_tile.dart';
+import 'package:navigation_bar/constants/i18n/I18nUtil.dart';
 import 'package:navigation_bar/pages/work/drawer/work_drawer_view.dart';
 
 class PersonalSettingView extends StatefulWidget {
@@ -30,86 +32,97 @@ class _PersonalSettingViewState extends State<PersonalSettingView> {
     ":",
     ":",
   ];
+  String dropdownValue = "One";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('個人設定'),
-      ),
+      appBar: createAppBar(),
       drawer: const WorkDrawerView(),
-      body: ListView.builder(
-          itemCount: 8,
-          itemBuilder: (BuildContext context, int index) {
-            if (index < 4) {
-              return SwitchListTile(
-                title: Text(personalSettingTitleList[index]),
-                controlAffinity: ListTileControlAffinity.leading,
-                value: switchFlagList[index],
-                onChanged: (bool value) {
-                  setState(() {
-                    switchFlagList[index] = value;
-                  });
-                },
-              );
-            }
-            if (index == 4) {
-              return ListTile(
-                title: Text(personalSettingTitleList[index]),
-                subtitle: DropdownButton<String>(
-                  isExpanded: true,
-                  value: "One",
-                  underline: Container(
-                    height: 2,
-                    color: Colors.grey,
-                  ),
-                  onChanged: (String? newValue) {
-                    // setState(() {
-                    // dropdownValue = newValue!;
-                    // });
-                  },
-                  items: ['One', 'Two', 'Free', 'Four'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onTap: () {},
-                ),
-              );
-            }
-            return ListTile(
-              title: Text(personalSettingTitleList[index]),
-              subtitle: TextButton(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                      alterTimeStringList[index - 5],
-                      style: const TextStyle(color: Colors.black)
-                  ),
-                ),
-                onPressed: () async {
-                  // TimeOfDay selectedTime =
-                  String hourAndMinute = alterTimeStringList[index - 5];
-                  int tempHour = int.tryParse(hourAndMinute.split(":")[0]) != null ? int.parse(hourAndMinute.split(":")[0]) : 0;
-                  int tempMinute = int.tryParse(hourAndMinute.split(":")[1]) != null ? int.parse(hourAndMinute.split(":")[1]) : 0;
-
-                  final TimeOfDay? selectedTime = await showTimePicker(
-                      initialTime: TimeOfDay(
-                          hour: tempHour,
-                          minute: tempMinute
-                      ),
-                      context: context
-                  );
-                  if(selectedTime != null){
-                    setState(() {
-                      alterTimeStringList[index - 5] = selectedTime.hour.toString() + ":" + selectedTime.minute.toString();
-                    });
-                  }
-                },
-              ),
-            );
-          }),
+      body: createListView(),
     );
+  }
+
+  AppBar createAppBar() {
+    return AppBar(
+      title: Text(I18nUtil.parse("personalSetting")),
+    );
+  }
+  ListView createListView() {
+    return ListView.builder(
+      itemCount: 8,
+      itemBuilder: (BuildContext context, int index) {
+        if (index < 4) {
+          return DefaultSwitchListTile(
+            titleText: personalSettingTitleList[index],
+            value: switchFlagList[index],
+            onChanged: (bool value) {
+              setState(() {
+                switchFlagList[index] = value;
+              });
+            },
+          );
+        }
+        if (index == 4) {
+          return ListTile(
+            title: Text(personalSettingTitleList[index]),
+            subtitle: DropdownButton<String>(
+              isExpanded: true,
+              value: dropdownValue,
+              underline: Container(
+                height: 2,
+                color: Colors.grey,
+              ),
+              onChanged: (String? newValue) {
+                setState(() {
+                  dropdownValue = newValue!;
+                });
+              },
+              items: ['One', 'Two', 'Free', 'Four'].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onTap: () {},
+            ),
+          );
+        }
+        return ListTile(
+          title: Text(personalSettingTitleList[index]),
+          subtitle: TextButton(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(alterTimeStringList[index - 5],
+                  style: const TextStyle(color: Colors.black)),
+            ),
+            onPressed: () async {
+              // TimeOfDay selectedTime =
+              String hourAndMinute = alterTimeStringList[index - 5];
+              int tempHour =
+              int.tryParse(hourAndMinute.split(":")[0]) != null
+                  ? int.parse(hourAndMinute.split(":")[0])
+                  : 0;
+              int tempMinute =
+              int.tryParse(hourAndMinute.split(":")[1]) != null
+                  ? int.parse(hourAndMinute.split(":")[1])
+                  : 0;
+
+              final TimeOfDay? selectedTime = await showTimePicker(
+                  initialTime:
+                  TimeOfDay(hour: tempHour, minute: tempMinute),
+                  context: context);
+              if (selectedTime != null) {
+                setState(() {
+                  alterTimeStringList[index - 5] =
+                      selectedTime.hour.toString() +
+                          ":" +
+                          selectedTime.minute.toString();
+                });
+              }
+            },
+          ),
+        );
+      });
   }
 }
