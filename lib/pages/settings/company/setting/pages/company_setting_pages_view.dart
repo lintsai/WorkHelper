@@ -7,7 +7,8 @@ class CompanySettingPagesView extends StatefulWidget {
   final String companyName;
 
   @override
-  _CompanySettingPagesViewState createState() => _CompanySettingPagesViewState();
+  _CompanySettingPagesViewState createState() =>
+      _CompanySettingPagesViewState();
 }
 
 class _CompanySettingPagesViewState extends State<CompanySettingPagesView> {
@@ -28,15 +29,17 @@ class _CompanySettingPagesViewState extends State<CompanySettingPagesView> {
 
   AppBar createAppBar() {
     return AppBar(
-      title: Text(widget.companyName + " - " + I18nUtil.parse("companySetting.pagesManagement")),
+      title: Text(widget.companyName +
+          " - " +
+          I18nUtil.parse("companySetting.pagesManagement")),
     );
   }
 
   ListView createListView() {
     return ListView.builder(
-        itemCount: _pagesList.length+1,
+        itemCount: _pagesList.length + 1,
         itemBuilder: (BuildContext context, int index) {
-          if(index == _pagesList.length){
+          if (index == _pagesList.length) {
             return createDropDownListTile();
           }
           return createSwitchListTile(index);
@@ -51,8 +54,7 @@ class _CompanySettingPagesViewState extends State<CompanySettingPagesView> {
           setState(() {
             switchFlagList[index] = value;
           });
-        }
-    );
+        });
   }
 
   String dropdownValue = _pagesList[0];
@@ -62,7 +64,6 @@ class _CompanySettingPagesViewState extends State<CompanySettingPagesView> {
     false,
     false,
   ];
-
 
   ListTile createDropDownListTile() {
     return ListTile(
