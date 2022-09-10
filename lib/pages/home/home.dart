@@ -11,34 +11,59 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const List homeSubPage = [ChatPage(), FriendListPage(), UserProfilePage()];
-  int homeSubPageIndex = 0;
+  int groupPageIndex = 0;
+
+  final List<Tab> groupTabs = <Tab>[
+    const Tab(
+      text: "上班打卡",
+    ),
+    const Tab(
+      text: "請假加班",
+    ),
+    const Tab(
+      text: "訊息通知",
+    ),
+  ];
+
+  String pageName = "";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: homeSubPage[homeSubPageIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.arrow_left),
-            label: "聊天",
+    return DefaultTabController(
+        length: groupTabs.length,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(pageName),
+            bottom: TabBar(
+              tabs: groupTabs,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.arrow_left),
-            label: "好友",
+          drawer: Drawer(
+            child: ListView.builder(
+                itemCount: 5,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    leading: const Icon(Icons.list),
+                    trailing: const Text(
+                      "GFG",
+                      style: TextStyle(color: Colors.green, fontSize: 15),
+                    ),
+                    title: Text("List item $index"),
+                    onTap: () {
+                      drawItemClick(context);
+                    },
+                  );
+                }),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.arrow_right_alt),
-            label: "個人資訊",
+          body: const TabBarView(
+            children: <Widget>[ChatPage(), FriendListPage(), UserProfilePage()],
           ),
-        ],
-        onTap: (index) {
-          setState(() {
-            homeSubPageIndex = index;
-          });
-        },
-      ),
-    );
+        ));
+  }
+
+  void drawItemClick(BuildContext context) {
+    setState(() {
+      Navigator.of(context).pop();
+    });
   }
 }
